@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Store Operations Diagnosis</title>
+<title>Store Operations Diagnosis | Keeta Brazil</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -18,6 +18,130 @@ body {
   background: #f0f2f5;
   min-height: 100vh;
 }
+
+/* ── Search Bar ── */
+.search-section {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  padding: 20px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.search-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.keeta-badge {
+  background: #FFD700;
+  color: #000;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.search-title {
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.search-row {
+  display: flex;
+  gap: 8px;
+}
+.search-input {
+  flex: 1;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s;
+}
+.search-input::placeholder { color: rgba(255,255,255,0.4); }
+.search-input:focus {
+  background: rgba(255,255,255,0.18);
+  border-color: #FFD700;
+}
+.search-btn {
+  background: #FFD700;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.search-btn:hover { background: #ffe033; transform: scale(1.02); }
+.search-btn:active { transform: scale(0.98); }
+.search-btn:disabled { background: #999; color: #ccc; cursor: not-allowed; transform: none; }
+.search-hint {
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+}
+
+/* ── Loading ── */
+.loading-state {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+.loading-state.active { display: flex; }
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(0,0,0,0.1);
+  border-top-color: #0f3460;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-size: 14px;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.6;
+}
+.loading-sub {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ── Error ── */
+.error-state {
+  display: none;
+  margin: 16px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid #ef4444;
+  text-align: center;
+}
+.error-state.active { display: block; }
+.error-icon { font-size: 32px; margin-bottom: 8px; }
+.error-title { font-size: 15px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
+.error-msg { font-size: 13px; color: #6b7280; line-height: 1.5; }
+
+/* ── Report ── */
+.report-area { display: none; }
+.report-area.active { display: block; }
+
+/* Header */
 .header {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
   padding: 20px 16px 24px;
@@ -33,14 +157,6 @@ body {
   background: rgba(255,255,255,0.04);
   border-radius: 50%;
 }
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: -20px; left: -20px;
-  width: 100px; height: 100px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 50%;
-}
 .lang-bar {
   display: flex;
   gap: 6px;
@@ -48,697 +164,513 @@ body {
   position: relative;
   z-index: 1;
 }
-.lang-btn {
+.lang-tag {
   background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.7);
-  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
-.lang-btn.active {
-  background: rgba(255,255,255,0.25);
-  border-color: rgba(255,255,255,0.5);
-  color: #fff;
-}
-.lang-btn:hover { background: rgba(255,255,255,0.2); }
-.store-label {
+  padding: 3px 10px;
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
-  margin-bottom: 6px;
-  position: relative;
-  z-index: 1;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
 }
-.store-name {
+.lang-tag.active {
+  background: rgba(255,215,0,0.2);
+  border-color: rgba(255,215,0,0.5);
+  color: #FFD700;
+}
+.shop-name {
   font-size: 22px;
   font-weight: 700;
-  color: #fff;
-  margin-bottom: 8px;
-  position: relative;
-  z-index: 1;
+  margin: 8px 0 2px;
   line-height: 1.2;
-}
-.store-meta {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
   position: relative;
   z-index: 1;
 }
-.meta-tag {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.8);
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-}
-.section {
-  padding: 16px;
-}
-.section-title {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: #666;
-  margin-bottom: 12px;
+.shop-meta {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  position: relative;
+  z-index: 1;
 }
 .score-card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 24px 16px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-.score-ring-wrap {
-  flex-shrink: 0;
-  position: relative;
-  width: 120px;
-  height: 120px;
-}
-.score-ring-wrap svg {
-  transform: rotate(-90deg);
-}
-.score-center {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  pointer-events: none;
-}
-.score-number {
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1;
-  color: #1a1a2e;
-}
-.score-max {
-  font-size: 12px;
-  color: #999;
-  margin-top: 2px;
-}
-.score-info { flex: 1; }
-.score-grade {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-.score-desc {
-  font-size: 13px;
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 10px;
-}
-.score-deduction {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: #fff0f0;
-  border: 1px solid #ffd0d0;
-  color: #e94560;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-.metric-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  padding: 12px 10px;
-  position: relative;
-  overflow: hidden;
-}
-.metric-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-}
-.metric-card.s-good::before  { background: #2e7d32; }
-.metric-card.s-warn::before  { background: #e65100; }
-.metric-card.s-bad::before   { background: #e94560; }
-.metric-card.s-neutral::before { background: #1565c0; }
-.metric-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #888;
-  margin-bottom: 6px;
-}
-.metric-value {
-  font-size: 18px;
-  font-weight: 800;
-  color: #1a1a2e;
-  line-height: 1;
-  margin-bottom: 6px;
-}
-.metric-unit {
-  font-size: 10px;
-  font-weight: 500;
-  color: #aaa;
-}
-.metric-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 7px;
-  border-radius: 8px;
-  font-size: 10px;
-  font-weight: 700;
-}
-.b-good    { background: #e8f5e9; color: #2e7d32; }
-.b-warn    { background: #fff3e0; color: #e65100; }
-.b-bad     { background: #ffeaee; color: #e94560; }
-.b-neutral { background: #e3f2fd; color: #1565c0; }
-.diag-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.diag-item {
-  background: #fff;
+  background: rgba(255,255,255,0.08);
   border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
   padding: 16px;
-  border-left: 4px solid #e94560;
-}
-.diag-item.ok { border-left-color: #2e7d32; }
-.diag-header {
+  margin: 16px 0 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
 }
-.diag-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1a1a2e;
-  flex: 1;
-  margin-right: 8px;
-}
-.diag-tag {
-  background: #e94560;
-  color: #fff;
-  padding: 2px 9px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  white-space: nowrap;
+.score-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
-.diag-tag.ok { background: #2e7d32; }
-.diag-compare {
+.score-num { font-size: 28px; font-weight: 900; color: #fff; }
+.score-info { flex: 1; }
+.score-level { font-size: 20px; font-weight: 800; }
+.score-emoji { font-size: 20px; margin-left: 6px; }
+.score-date { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+.deductions {
   display: flex;
-  gap: 12px;
-  margin-bottom: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 8px 10px;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
 }
-.diag-citem { flex: 1; text-align: center; }
-.citem-label {
+.ded-tag {
+  background: rgba(239,68,68,0.2);
+  color: #fca5a5;
   font-size: 10px;
-  color: #888;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 3px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(239,68,68,0.3);
 }
-.citem-val {
-  font-size: 14px;
-  font-weight: 700;
-}
-.cv-bad  { color: #e94560; }
-.cv-good { color: #2e7d32; }
-.cv-neu  { color: #1a1a2e; }
-.citem-sep {
-  color: #ccc;
-  font-size: 18px;
-  line-height: 1;
-}
-.diag-action {
+
+/* Diagnosis Section */
+.section { padding: 0 12px; margin: 14px 0; }
+.section-title {
   font-size: 12px;
-  color: #444;
-  line-height: 1.6;
-  padding: 8px 0 0;
-  border-top: 1px solid #f0f0f0;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  padding-left: 4px;
 }
-.diag-action::before { content: '💡 '; }
+.diag-row {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border-left: 3px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.diag-row.s-ok { border-left-color: #22c55e; }
+.diag-row.s-warn { border-left-color: #f59e0b; }
+.diag-row.s-bad { border-left-color: #ef4444; }
+.diag-row.s-info { border-left-color: #6366f1; }
+.diag-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.diag-icon { font-size: 14px; font-weight: 700; }
+.diag-metric { font-size: 13px; font-weight: 600; flex: 1; }
+.diag-value { font-size: 13px; font-weight: 700; }
+.diag-meta { display: flex; justify-content: space-between; margin-top: 2px; }
+.diag-bench { font-size: 11px; color: #9ca3af; }
+.diag-cat { font-size: 10px; color: #d1d5db; background: #f3f4f6; padding: 1px 6px; border-radius: 3px; }
+.suggestion {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #6b7280;
+  background: #fffbeb;
+  border-radius: 6px;
+  padding: 6px 8px;
+  border-left: 2px solid #f59e0b;
+  line-height: 1.4;
+}
+
+/* Action Row */
+.action-row {
+  padding: 12px 12px 4px;
+  display: flex;
+  gap: 8px;
+}
+.action-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-share {
+  background: #0f3460;
+  color: #fff;
+}
+.btn-share:hover { background: #1a4a7a; }
+.btn-new {
+  background: #f3f4f6;
+  color: #374151;
+}
+.btn-new:hover { background: #e5e7eb; }
+
+/* Footer */
 .footer {
   text-align: center;
   padding: 20px 16px;
-  color: #aaa;
   font-size: 11px;
+  color: #9ca3af;
   line-height: 1.6;
 }
-.footer strong { color: #666; }
-@media (min-width: 480px) {
-  .container {
-    margin: 20px auto;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-  }
-}
+.footer a { color: #6b7280; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="lang-bar">
-      <button class="lang-btn active" onclick="setLang('en')">English</button>
-      <button class="lang-btn" onclick="setLang('zh')">中文</button>
-      <button class="lang-btn" onclick="setLang('pt')">Português</button>
+  <!-- ── Search Bar ── -->
+  <div class="search-section">
+    <div class="search-header">
+      <span class="keeta-badge">KEETA</span>
+      <span class="search-title">Store Diagnosis · 店铺诊断 · Diagnóstico de Loja</span>
     </div>
-    <div class="store-label" id="hStoreLabel"></div>
-    <div class="store-name">Kibou Sushi's</div>
-    <div class="store-meta">
-      <span class="meta-tag">ID: 159409277</span>
-      <span class="meta-tag" id="hPeriod"></span>
+    <div class="search-row">
+      <input
+        class="search-input"
+        id="shopIdInput"
+        type="number"
+        placeholder="Enter Shop ID / 输入 Shop ID"
+        inputmode="numeric"
+        onkeydown="if(event.key==='Enter')runDiagnose()"
+      />
+      <button class="search-btn" id="searchBtn" onclick="runDiagnose()">
+        🔍 Diagnose
+      </button>
+    </div>
+    <div class="search-hint" id="searchHint">
+      Try: 159409277 · Kibou Sushi's
     </div>
   </div>
 
-  <!-- HEALTH SCORE -->
-  <div class="section">
-    <div class="section-title" id="hHealthTitle"></div>
-    <div class="score-card">
-      <div class="score-ring-wrap">
-        <svg width="120" height="120" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="#f0f0f0" stroke-width="10"/>
-          <circle id="scoreArc" cx="60" cy="60" r="50" fill="none"
-            stroke="#2e7d32" stroke-width="10" stroke-linecap="round"
-            stroke-dasharray="314" stroke-dashoffset="314"
-            style="transition: stroke-dashoffset 1s ease, stroke 0.5s ease"/>
-        </svg>
-        <div class="score-center">
-          <div class="score-number" id="scoreNum">--</div>
-          <div class="score-max">/100</div>
+  <!-- ── Loading ── -->
+  <div class="loading-state" id="loadingState">
+    <div class="spinner"></div>
+    <div class="loading-text">
+      Fetching data from Hive...<br>
+      <span class="loading-sub">正在查询数据，请稍候 · Buscando dados...</span>
+    </div>
+  </div>
+
+  <!-- ── Error ── -->
+  <div class="error-state" id="errorState">
+    <div class="error-icon">😕</div>
+    <div class="error-title" id="errorTitle">Shop Not Found</div>
+    <div class="error-msg" id="errorMsg">No data found for this Shop ID in the past 7 days.</div>
+  </div>
+
+  <!-- ── Report ── -->
+  <div class="report-area" id="reportArea">
+
+    <div class="header">
+      <div class="lang-bar">
+        <span class="lang-tag active" onclick="setLang('en',this)">EN</span>
+        <span class="lang-tag" onclick="setLang('zh',this)">中文</span>
+        <span class="lang-tag" onclick="setLang('pt',this)">PT</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;position:relative;z-index:1">
+        STORE DIAGNOSIS REPORT
+      </div>
+      <div class="shop-name" id="shopName">—</div>
+      <div class="shop-meta" id="shopMeta">Shop ID: — · Last 7 days</div>
+      <div class="score-card">
+        <div class="score-circle" id="scoreCircle">
+          <span class="score-num" id="scoreNum">—</span>
+        </div>
+        <div class="score-info">
+          <div>
+            <span class="score-level" id="scoreLevel">—</span>
+            <span class="score-emoji" id="scoreEmoji"></span>
+          </div>
+          <div class="score-date" id="scoreDate">—</div>
+          <div class="deductions" id="deductions"></div>
         </div>
       </div>
-      <div class="score-info">
-        <div class="score-grade" id="scoreGrade"></div>
-        <div class="score-desc" id="scoreDesc"></div>
-        <div class="score-deduction" id="scoreDeduct">
-          <span>▼</span>
-          <span id="deductText"></span>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- CORE METRICS -->
-  <div class="section">
-    <div class="section-title" id="hMetricsTitle"></div>
-    <div class="metrics-grid" id="metricsGrid"></div>
-  </div>
+    <div class="section">
+      <div class="section-title">📊 Diagnosis Details</div>
+      <div id="diagRows"></div>
+    </div>
 
-  <!-- DIAGNOSIS -->
-  <div class="section">
-    <div class="section-title" id="hDiagTitle"></div>
-    <div class="diag-list" id="diagList"></div>
-  </div>
+    <div class="action-row">
+      <button class="action-btn btn-share" id="shareBtn" onclick="shareReport()">
+        📤 Share Report
+      </button>
+      <button class="action-btn btn-new" onclick="resetSearch()">
+        🔄 New Search
+      </button>
+    </div>
 
-  <!-- FOOTER -->
-  <div class="footer">
-    <strong>Keeta Operations Intelligence</strong><br>
-    <span id="hFooterNote"></span>
-  </div>
-</div>
+    <div class="footer">
+      Keeta Brazil · SP Metropolitan · Auto-generated by AI Eric<br>
+      <a href="https://zhangwenle2026.github.io/shop-diagnosis/" id="pageLink">🔗 View Online</a>
+    </div>
+
+  </div><!-- /report-area -->
+
+</div><!-- /container -->
 
 <script>
-// ── DATA ──────────────────────────────────────────
-var DATA = {
-  orders:         32,
-  gmv:            2514.20,
-  aov:            78.57,
-  cancelRate:     0.0,
-  avgPrepMin:     45,
-  avgDeliveryMin: 54.5,
-  avgRating:      5.0,
-  spuCount:       53,
-  hotSpuCount:    10
-};
+// ── Config ──────────────────────────────────────────────────────────────────
+const API_BASE_URL = 'http://localhost:8765';
 
-// ── SCORING ───────────────────────────────────────
-function calcScore() {
-  var d = [];
-  if (DATA.avgPrepMin > 40)      d.push({key:'prep', pts:10});
-  else if (DATA.avgPrepMin > 30) d.push({key:'prep', pts:5});
+// ── State ───────────────────────────────────────────────────────────────────
+let currentLang = 'en';
+let currentData = null;
 
-  if (DATA.avgDeliveryMin > 50)      d.push({key:'delivery', pts:10});
-  else if (DATA.avgDeliveryMin > 40) d.push({key:'delivery', pts:5});
-
-  if (DATA.cancelRate > 10)     d.push({key:'cancel', pts:15});
-  else if (DATA.cancelRate > 5) d.push({key:'cancel', pts:8});
-
-  if (DATA.avgRating < 3.0)     d.push({key:'rating', pts:15});
-  else if (DATA.avgRating < 4.0) d.push({key:'rating', pts:8});
-
-  if (DATA.spuCount < 10)      d.push({key:'spu', pts:10});
-  else if (DATA.spuCount < 20) d.push({key:'spu', pts:5});
-
-  var total = d.reduce(function(s,x){return s+x.pts;},0);
-  d.sort(function(a,b){return b.pts-a.pts;});
-  return { score: Math.max(0, 100-total), deducted: total, items: d };
-}
-var SR = calcScore();
-
-// ── I18N ──────────────────────────────────────────
-var T = {
+// ── Language Labels ──────────────────────────────────────────────────────────
+const labels = {
   en: {
-    storeLabel:'Store Diagnosis Report',
-    period:'Apr 28 – May 4, 2026',
-    healthTitle:'Health Score',
-    metricsTitle:'Core Metrics',
-    diagTitle:'Diagnosis & Priority Actions',
-    footerNote:'Auto-generated report · Data period: Apr 28 – May 4, 2026',
-    gradeExcellent:'Excellent', gradeGood:'Good',
-    gradeAttention:'Needs Attention', gradeCritical:'Critical',
-    descExcellent:'Outstanding performance! Keep up the great work.',
-    descGood:'Overall operations are healthy with minor areas to improve.',
-    descAttention:'Several issues need your attention to improve performance.',
-    descCritical:'Critical issues are impacting your business. Act immediately.',
-    deductLabel:'pts deducted',
-    mOrders:'Orders', mGmv:'GMV', mAov:'AOV',
-    mCancel:'Cancel Rate', mPrep:'Avg Prep', mDelivery:'Avg Delivery',
-    mRating:'Rating', mSpu:'Active SPUs', mHotSpu:'Hot SPUs',
-    badgeGood:'✓ Good', badgeWarn:'⚠ Warn', badgeBad:'✗ Poor',
-    unitMin:'min', unitOrders:'orders',
-    current:'Current', benchmark:'Target',
-    diagPrepTitle:'Prep Time Too Long',
-    diagPrepCurr: DATA.avgPrepMin + ' min',
-    diagPrepBench: '≤ 30 min',
-    diagPrepAction:'Review kitchen workflow and optimize dish preparation steps. Pre-prep ingredients during slow hours. Target: under 30 min prep time.',
-    diagDelivTitle:'Delivery Time Exceeds Benchmark',
-    diagDelivCurr: DATA.avgDeliveryMin + ' min',
-    diagDelivBench: '≤ 40 min',
-    diagDelivAction:'Coordinate with logistics to optimize dispatch routing. Ensure orders are ready before courier arrives. Target: under 40 min total delivery.',
-    diagCancelTitle:'Cancellation Rate',
-    diagCancelCurr: DATA.cancelRate.toFixed(1)+'%',
-    diagCancelBench: '< 5%',
-    diagCancelAction:'No cancellation issues detected. Maintain current acceptance rate practices.',
-    diagRatingTitle:'Customer Rating',
-    diagRatingCurr: DATA.avgRating.toFixed(1),
-    diagRatingBench: '≥ 4.0',
-    diagRatingAction:'Perfect rating! Keep maintaining food quality and packaging standards.',
-    diagSpuTitle:'Menu Coverage (SPUs)',
-    diagSpuCurr: DATA.spuCount + ' SPUs',
-    diagSpuBench: '≥ 20 SPUs',
-    diagSpuAction:'Good menu variety. Analyze hot item patterns to create combo offers and boost AOV.',
-    allClear:'🎉 All metrics are within healthy benchmarks!'
+    diagTitle: '📊 Diagnosis Details',
+    share: '📤 Share Report',
+    newSearch: '🔄 New Search',
+    loading: 'Fetching data from Hive...',
+    loadingSub: '正在查询数据，请稍候 · Buscando dados...',
+    benchmark: 'Benchmark',
+    notFound: 'Shop Not Found',
+    notFoundMsg: 'No data found for this shop ID. Please check the ID and try again.',
+    error: 'Connection Error',
+    errorMsg: 'Could not reach the API server. Make sure the backend is running.',
   },
   zh: {
-    storeLabel:'门店经营诊断报告',
-    period:'2026年4月28日 – 5月4日',
-    healthTitle:'健康评分',
-    metricsTitle:'核心指标',
-    diagTitle:'诊断分析与优先行动',
-    footerNote:'自动生成报告 · 数据周期：2026年4月28日 – 5月4日',
-    gradeExcellent:'优秀', gradeGood:'良好',
-    gradeAttention:'需关注', gradeCritical:'危险',
-    descExcellent:'表现卓越！继续保持优秀水准。',
-    descGood:'整体运营健康，有小部分待改善项。',
-    descAttention:'多项指标需要关注，建议尽快优化。',
-    descCritical:'存在严重问题，请立即采取行动！',
-    deductLabel:'分被扣除',
-    mOrders:'订单量', mGmv:'GMV', mAov:'客单价',
-    mCancel:'取消率', mPrep:'平均出餐', mDelivery:'平均配送',
-    mRating:'评分', mSpu:'在售菜品', mHotSpu:'热销菜品',
-    badgeGood:'✓ 良好', badgeWarn:'⚠ 警告', badgeBad:'✗ 较差',
-    unitMin:'分钟', unitOrders:'单',
-    current:'当前值', benchmark:'基准值',
-    diagPrepTitle:'出餐时长偏高',
-    diagPrepCurr: DATA.avgPrepMin + ' 分钟',
-    diagPrepBench: '≤ 30 分钟',
-    diagPrepAction:'审查厨房操作流程，优化备餐步骤。建议在空闲时段提前备料，目标将出餐时长控制在30分钟以内。',
-    diagDelivTitle:'配送时长超出基准',
-    diagDelivCurr: DATA.avgDeliveryMin + ' 分钟',
-    diagDelivBench: '≤ 40 分钟',
-    diagDelivAction:'与物流团队协调优化派单路线，确保订单在骑手到达前备妥，目标将总配送时长控制在40分钟以内。',
-    diagCancelTitle:'取消率',
-    diagCancelCurr: DATA.cancelRate.toFixed(1)+'%',
-    diagCancelBench: '< 5%',
-    diagCancelAction:'未发现取消率问题，请继续保持当前接单管理习惯。',
-    diagRatingTitle:'顾客评分',
-    diagRatingCurr: DATA.avgRating.toFixed(1),
-    diagRatingBench: '≥ 4.0',
-    diagRatingAction:'评分满分！请继续保持菜品质量和包装标准。',
-    diagSpuTitle:'菜单丰富度（SPU）',
-    diagSpuCurr: DATA.spuCount + ' 个SKU',
-    diagSpuBench: '≥ 20 个',
-    diagSpuAction:'菜单品类丰富，建议分析热销品规律，推出套餐组合以提升客单价。',
-    allClear:'🎉 所有指标均在健康基准内！'
+    diagTitle: '📊 诊断详情',
+    share: '📤 分享报告',
+    newSearch: '🔄 重新搜索',
+    loading: '正在从 Hive 查询数据...',
+    loadingSub: '通常需要 15-30 秒',
+    benchmark: '基准',
+    notFound: '商家不存在',
+    notFoundMsg: '未找到该 Shop ID 的数据，请检查后重试。',
+    error: '连接错误',
+    errorMsg: '无法连接后端服务，请确认 API 已启动。',
   },
   pt: {
-    storeLabel:'Relatório de Diagnóstico da Loja',
-    period:'28 Abr – 4 Mai, 2026',
-    healthTitle:'Pontuação de Saúde',
-    metricsTitle:'Métricas Principais',
-    diagTitle:'Diagnóstico e Ações Prioritárias',
-    footerNote:'Relatório gerado automaticamente · Período: 28 Abr – 4 Mai, 2026',
-    gradeExcellent:'Excelente', gradeGood:'Bom',
-    gradeAttention:'Precisa Atenção', gradeCritical:'Crítico',
-    descExcellent:'Desempenho excepcional! Continue o ótimo trabalho.',
-    descGood:'Operações saudáveis com pequenas áreas para melhoria.',
-    descAttention:'Vários pontos precisam de atenção para melhorar o desempenho.',
-    descCritical:'Problemas críticos estão impactando seu negócio. Aja imediatamente.',
-    deductLabel:'pts deduzidos',
-    mOrders:'Pedidos', mGmv:'GMV', mAov:'Ticket Médio',
-    mCancel:'Taxa Cancel.', mPrep:'Preparo Médio', mDelivery:'Entrega Média',
-    mRating:'Avaliação', mSpu:'SPUs Ativos', mHotSpu:'SPUs Quentes',
-    badgeGood:'✓ Bom', badgeWarn:'⚠ Atenção', badgeBad:'✗ Ruim',
-    unitMin:'min', unitOrders:'pedidos',
-    current:'Atual', benchmark:'Meta',
-    diagPrepTitle:'Tempo de Preparo Alto',
-    diagPrepCurr: DATA.avgPrepMin + ' min',
-    diagPrepBench: '≤ 30 min',
-    diagPrepAction:'Revise o fluxo da cozinha e otimize as etapas de preparo. Pré-prepare ingredientes em períodos de baixo movimento. Meta: menos de 30 min de preparo.',
-    diagDelivTitle:'Tempo de Entrega Acima do Esperado',
-    diagDelivCurr: DATA.avgDeliveryMin + ' min',
-    diagDelivBench: '≤ 40 min',
-    diagDelivAction:'Coordene com a logística para otimizar o roteamento de despacho. Certifique-se de que os pedidos estejam prontos antes da chegada do entregador. Meta: menos de 40 min no total.',
-    diagCancelTitle:'Taxa de Cancelamento',
-    diagCancelCurr: DATA.cancelRate.toFixed(1)+'%',
-    diagCancelBench: '< 5%',
-    diagCancelAction:'Nenhum problema de cancelamento detectado. Mantenha as práticas atuais de gerenciamento de pedidos.',
-    diagRatingTitle:'Avaliação dos Clientes',
-    diagRatingCurr: DATA.avgRating.toFixed(1),
-    diagRatingBench: '≥ 4.0',
-    diagRatingAction:'Avaliação perfeita! Continue mantendo os padrões de qualidade e embalagem.',
-    diagSpuTitle:'Variedade do Cardápio (SPUs)',
-    diagSpuCurr: DATA.spuCount + ' SPUs',
-    diagSpuBench: '≥ 20 SPUs',
-    diagSpuAction:'Boa variedade no cardápio. Analise padrões de itens populares para criar combos e aumentar o ticket médio.',
-    allClear:'🎉 Todas as métricas estão dentro dos limites saudáveis!'
-  }
+    diagTitle: '📊 Diagnóstico Detalhado',
+    share: '📤 Compartilhar',
+    newSearch: '🔄 Nova Busca',
+    loading: 'Buscando dados no Hive...',
+    loadingSub: 'Geralmente leva 15-30 segundos',
+    benchmark: 'Benchmark',
+    notFound: 'Loja Não Encontrada',
+    notFoundMsg: 'Nenhum dado encontrado para este Shop ID.',
+    error: 'Erro de Conexão',
+    errorMsg: 'Não foi possível conectar ao servidor da API.',
+  },
 };
 
-// ── STATE ─────────────────────────────────────────
-var currentLang = 'en';
-
-function setLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b) {
-    b.classList.toggle('active', b.textContent.trim() === ({en:'English',zh:'中文',pt:'Português'}[lang]));
-  });
-  render();
+// ── UI Helpers ───────────────────────────────────────────────────────────────
+function showLoading() {
+  document.getElementById('loadingState').className = 'loading-state active';
+  document.getElementById('errorState').className = 'error-state';
+  document.getElementById('reportArea').className = 'report-area';
+  document.getElementById('searchBtn').disabled = true;
+}
+function showError(title, msg) {
+  document.getElementById('loadingState').className = 'loading-state';
+  document.getElementById('errorState').className = 'error-state active';
+  document.getElementById('reportArea').className = 'report-area';
+  document.getElementById('errorTitle').textContent = title;
+  document.getElementById('errorMsg').textContent = msg;
+  document.getElementById('searchBtn').disabled = false;
+}
+function showReport(data) {
+  document.getElementById('loadingState').className = 'loading-state';
+  document.getElementById('errorState').className = 'error-state';
+  document.getElementById('reportArea').className = 'report-area active';
+  document.getElementById('searchBtn').disabled = false;
+}
+function resetSearch() {
+  document.getElementById('loadingState').className = 'loading-state';
+  document.getElementById('errorState').className = 'error-state';
+  document.getElementById('reportArea').className = 'report-area';
+  document.getElementById('shopIdInput').value = '';
+  document.getElementById('shopIdInput').focus();
+  document.getElementById('searchBtn').disabled = false;
 }
 
-// ── HELPERS ───────────────────────────────────────
-function scoreColor(s) {
-  if (s >= 90) return '#2e7d32';
-  if (s >= 70) return '#1565c0';
-  if (s >= 50) return '#e65100';
-  return '#e94560';
-}
-function scoreGrade(s, t) {
-  if (s >= 90) return t.gradeExcellent;
-  if (s >= 70) return t.gradeGood;
-  if (s >= 50) return t.gradeAttention;
-  return t.gradeCritical;
-}
-function scoreDesc(s, t) {
-  if (s >= 90) return t.descExcellent;
-  if (s >= 70) return t.descGood;
-  if (s >= 50) return t.descAttention;
-  return t.descCritical;
-}
-
-// ── RENDER ────────────────────────────────────────
-function render() {
-  var t = T[currentLang];
-  var lang = currentLang;
+// ── Render Report ────────────────────────────────────────────────────────────
+function renderReport(data) {
+  currentData = data;
 
   // Header
-  document.getElementById('hStoreLabel').textContent = t.storeLabel;
-  document.getElementById('hPeriod').textContent = t.period;
-  document.getElementById('hHealthTitle').textContent = t.healthTitle;
-  document.getElementById('hMetricsTitle').textContent = t.metricsTitle;
-  document.getElementById('hDiagTitle').textContent = t.diagTitle;
-  document.getElementById('hFooterNote').textContent = t.footerNote;
+  document.getElementById('shopName').textContent = data.shop_name || `Shop #${data.shop_id}`;
+  document.getElementById('shopMeta').textContent =
+    `Shop ID: ${data.shop_id} · Last ${data.metrics.days} days`;
 
-  // Score ring
-  var s = SR.score;
-  var arc = document.getElementById('scoreArc');
-  var circumference = 2 * Math.PI * 50; // ~314.16
-  var offset = circumference * (1 - s / 100);
-  arc.style.strokeDashoffset = offset;
-  arc.style.stroke = scoreColor(s);
-  document.getElementById('scoreNum').textContent = s;
-  var gradeEl = document.getElementById('scoreGrade');
-  gradeEl.textContent = scoreGrade(s, t);
-  gradeEl.style.color = scoreColor(s);
-  document.getElementById('scoreDesc').textContent = scoreDesc(s, t);
-  document.getElementById('deductText').textContent = '-' + SR.deducted + ' ' + t.deductLabel;
+  const circle = document.getElementById('scoreCircle');
+  circle.style.background = data.health_color || '#6b7280';
+  document.getElementById('scoreNum').textContent = data.health_score;
+  document.getElementById('scoreLevel').textContent = data.health_level;
+  document.getElementById('scoreLevel').style.color = data.health_color;
+  document.getElementById('scoreEmoji').textContent = data.health_emoji || '';
 
-  // Metrics
-  var metrics = [
-    { label: t.mOrders,   value: DATA.orders,   unit: t.unitOrders, cls: 's-neutral', badge: t.badgeGood, bcls: 'b-neutral' },
-    { label: t.mGmv,      value: 'R$\u00a0' + DATA.gmv.toFixed(2), unit: '', cls: 's-neutral', badge: t.badgeGood, bcls: 'b-neutral' },
-    { label: t.mAov,      value: 'R$\u00a0' + DATA.aov.toFixed(2), unit: '', cls: 's-good',    badge: t.badgeGood, bcls: 'b-good' },
-    { label: t.mCancel,   value: DATA.cancelRate.toFixed(1) + '%', unit: '', cls: 's-good',    badge: t.badgeGood, bcls: 'b-good' },
-    { label: t.mPrep,     value: DATA.avgPrepMin, unit: t.unitMin,
-      cls: DATA.avgPrepMin > 40 ? 's-bad' : DATA.avgPrepMin > 30 ? 's-warn' : 's-good',
-      badge: DATA.avgPrepMin > 40 ? t.badgeBad : DATA.avgPrepMin > 30 ? t.badgeWarn : t.badgeGood,
-      bcls:  DATA.avgPrepMin > 40 ? 'b-bad'   : DATA.avgPrepMin > 30 ? 'b-warn'   : 'b-good' },
-    { label: t.mDelivery, value: DATA.avgDeliveryMin, unit: t.unitMin,
-      cls: DATA.avgDeliveryMin > 50 ? 's-bad' : DATA.avgDeliveryMin > 40 ? 's-warn' : 's-good',
-      badge: DATA.avgDeliveryMin > 50 ? t.badgeBad : DATA.avgDeliveryMin > 40 ? t.badgeWarn : t.badgeGood,
-      bcls:  DATA.avgDeliveryMin > 50 ? 'b-bad'   : DATA.avgDeliveryMin > 40 ? 'b-warn'   : 'b-good' },
-    { label: t.mRating,   value: DATA.avgRating.toFixed(1), unit: '★',
-      cls: DATA.avgRating < 3 ? 's-bad' : DATA.avgRating < 4 ? 's-warn' : 's-good',
-      badge: DATA.avgRating < 3 ? t.badgeBad : DATA.avgRating < 4 ? t.badgeWarn : t.badgeGood,
-      bcls:  DATA.avgRating < 3 ? 'b-bad'   : DATA.avgRating < 4 ? 'b-warn'   : 'b-good' },
-    { label: t.mSpu,      value: DATA.spuCount, unit: 'SPUs',
-      cls: DATA.spuCount < 10 ? 's-bad' : DATA.spuCount < 20 ? 's-warn' : 's-good',
-      badge: DATA.spuCount < 10 ? t.badgeBad : DATA.spuCount < 20 ? t.badgeWarn : t.badgeGood,
-      bcls:  DATA.spuCount < 10 ? 'b-bad'   : DATA.spuCount < 20 ? 'b-warn'   : 'b-good' },
-    { label: t.mHotSpu,   value: DATA.hotSpuCount, unit: 'SPUs', cls: 's-good', badge: t.badgeGood, bcls: 'b-good' },
-  ];
-  var grid = document.getElementById('metricsGrid');
-  grid.innerHTML = metrics.map(function(m) {
-    return '<div class="metric-card ' + m.cls + '">' +
-      '<div class="metric-label">' + m.label + '</div>' +
-      '<div class="metric-value">' + m.value + '<span class="metric-unit"> ' + m.unit + '</span></div>' +
-      '<span class="metric-badge ' + m.bcls + '">' + m.badge + '</span>' +
-      '</div>';
-  }).join('');
+  const genAt = data.generated_at
+    ? new Date(data.generated_at).toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })
+    : new Date().toUTCString();
+  document.getElementById('scoreDate').textContent = `Generated ${genAt}`;
 
-  // Diagnosis
-  // Build all diagnosis items (including non-issues)
-  var allDiag = [
-    {
-      key: 'prep',
-      title: t.diagPrepTitle,
-      pts: (DATA.avgPrepMin > 40 ? 10 : DATA.avgPrepMin > 30 ? 5 : 0),
-      curr: t.diagPrepCurr,
-      bench: t.diagPrepBench,
-      currCls: (DATA.avgPrepMin > 30 ? 'cv-bad' : 'cv-good'),
-      action: t.diagPrepAction,
-      isIssue: DATA.avgPrepMin > 30
-    },
-    {
-      key: 'delivery',
-      title: t.diagDelivTitle,
-      pts: (DATA.avgDeliveryMin > 50 ? 10 : DATA.avgDeliveryMin > 40 ? 5 : 0),
-      curr: t.diagDelivCurr,
-      bench: t.diagDelivBench,
-      currCls: (DATA.avgDeliveryMin > 40 ? 'cv-bad' : 'cv-good'),
-      action: t.diagDelivAction,
-      isIssue: DATA.avgDeliveryMin > 40
-    },
-    {
-      key: 'cancel',
-      title: t.diagCancelTitle,
-      pts: (DATA.cancelRate > 10 ? 15 : DATA.cancelRate > 5 ? 8 : 0),
-      curr: t.diagCancelCurr,
-      bench: t.diagCancelBench,
-      currCls: (DATA.cancelRate > 5 ? 'cv-bad' : 'cv-good'),
-      action: t.diagCancelAction,
-      isIssue: DATA.cancelRate > 5
-    },
-    {
-      key: 'rating',
-      title: t.diagRatingTitle,
-      pts: (DATA.avgRating < 3 ? 15 : DATA.avgRating < 4 ? 8 : 0),
-      curr: t.diagRatingCurr,
-      bench: t.diagRatingBench,
-      currCls: (DATA.avgRating < 4 ? 'cv-bad' : 'cv-good'),
-      action: t.diagRatingAction,
-      isIssue: DATA.avgRating < 4
-    },
-    {
-      key: 'spu',
-      title: t.diagSpuTitle,
-      pts: (DATA.spuCount < 10 ? 10 : DATA.spuCount < 20 ? 5 : 0),
-      curr: t.diagSpuCurr,
-      bench: t.diagSpuBench,
-      currCls: (DATA.spuCount < 20 ? 'cv-bad' : 'cv-good'),
-      action: t.diagSpuAction,
-      isIssue: DATA.spuCount < 20
-    }
-  ];
-
-  // Sort: issues first (by pts desc), then non-issues
-  var issues    = allDiag.filter(function(d){return d.isIssue;}).sort(function(a,b){return b.pts-a.pts;});
-  var nonIssues = allDiag.filter(function(d){return !d.isIssue;});
-  var sorted = issues.concat(nonIssues);
-
-  var diagHTML = '';
-  if (issues.length === 0) {
-    diagHTML = '<div class="diag-item ok"><div class="no-issue-msg">' + t.allClear + '</div></div>';
-  }
-  sorted.forEach(function(d) {
-    var itemCls = d.isIssue ? '' : ' ok';
-    var tagCls  = d.isIssue ? '' : ' ok';
-    var tagTxt  = d.isIssue ? ('-' + d.pts + ' pts') : '✓ OK';
-    diagHTML += '<div class="diag-item' + itemCls + '">' +
-      '<div class="diag-header">' +
-        '<div class="diag-title">' + d.title + '</div>' +
-        '<div class="diag-tag' + tagCls + '">' + tagTxt + '</div>' +
-      '</div>' +
-      '<div class="diag-compare">' +
-        '<div class="diag-citem"><div class="citem-label">' + t.current + '</div><div class="citem-val ' + d.currCls + '">' + d.curr + '</div></div>' +
-        '<div class="citem-sep">→</div>' +
-        '<div class="diag-citem"><div class="citem-label">' + t.benchmark + '</div><div class="citem-val cv-good">' + d.bench + '</div></div>' +
-      '</div>' +
-      '<div class="diag-action">' + d.action + '</div>' +
-    '</div>';
+  // Deductions
+  const dedEl = document.getElementById('deductions');
+  dedEl.innerHTML = '';
+  (data.deductions || []).slice(0, 4).forEach(d => {
+    const span = document.createElement('span');
+    span.className = 'ded-tag';
+    span.textContent = `-${d.pts} ${d.label}`;
+    dedEl.appendChild(span);
   });
 
-  document.getElementById('diagList').innerHTML = diagHTML;
+  // Diagnosis rows
+  renderDiagRows(data.diagnosis || []);
+
+  // Share link
+  document.getElementById('pageLink').href =
+    data.report_url || `https://zhangwenle2026.github.io/shop-diagnosis/?shop_id=${data.shop_id}`;
+
+  showReport(data);
 }
 
-// ── INIT ──────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', function() {
-  render();
-  // Animate score ring after short delay
-  setTimeout(function() {
-    var arc = document.getElementById('scoreArc');
-    var circumference = 2 * Math.PI * 50;
-    arc.style.strokeDashoffset = circumference * (1 - SR.score / 100);
-  }, 100);
+function renderDiagRows(items) {
+  const scColor = { ok: '#22c55e', warn: '#f59e0b', bad: '#ef4444', info: '#6366f1' };
+  const scIcon = { ok: '✓', warn: '⚠', bad: '✗', info: 'ℹ' };
+
+  const container = document.getElementById('diagRows');
+  container.innerHTML = '';
+
+  // Group by category
+  const groups = {};
+  items.forEach(item => {
+    if (!groups[item.category]) groups[item.category] = [];
+    groups[item.category].push(item);
+  });
+
+  Object.entries(groups).forEach(([cat, catItems]) => {
+    const section = document.createElement('div');
+    section.className = 'section';
+    section.style.padding = '0';
+    section.style.margin = '0 0 12px 0';
+
+    const title = document.createElement('div');
+    title.className = 'section-title';
+    title.textContent = cat;
+    section.appendChild(title);
+
+    catItems.forEach(item => {
+      const row = document.createElement('div');
+      row.className = `diag-row s-${item.status}`;
+      const color = scColor[item.status] || '#6b7280';
+      const icon = scIcon[item.status] || '•';
+
+      row.innerHTML = `
+        <div class="diag-header">
+          <span class="diag-icon" style="color:${color}">${icon}</span>
+          <span class="diag-metric">${item.metric}</span>
+          <span class="diag-value" style="color:${color}">${item.value}</span>
+        </div>
+        <div class="diag-meta">
+          <span class="diag-bench">Benchmark: ${item.benchmark}</span>
+          <span class="diag-cat">${item.category}</span>
+        </div>
+        ${item.suggestion ? `<div class="suggestion">💡 ${item.suggestion}</div>` : ''}
+      `;
+      section.appendChild(row);
+    });
+    container.appendChild(section);
+  });
+}
+
+// ── Main ─────────────────────────────────────────────────────────────────────
+async function runDiagnose() {
+  const raw = document.getElementById('shopIdInput').value.trim();
+  if (!raw || isNaN(parseInt(raw))) {
+    document.getElementById('shopIdInput').focus();
+    return;
+  }
+  const shopId = parseInt(raw);
+  const days = 7;
+  const L = labels[currentLang];
+
+  // Check URL params too
+  const params = new URLSearchParams(window.location.search);
+
+  showLoading();
+  document.getElementById('searchHint').textContent = `Querying shop ${shopId}...`;
+
+  try {
+    const resp = await fetch(`${API_BASE_URL}/diagnose?shop_id=${shopId}&days=${days}`, {
+      signal: AbortSignal.timeout(130000)
+    });
+
+    if (resp.status === 404) {
+      showError(L.notFound, L.notFoundMsg);
+      document.getElementById('searchHint').textContent = 'Shop not found.';
+      return;
+    }
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      showError(L.error, err.detail || `HTTP ${resp.status}`);
+      return;
+    }
+
+    const data = await resp.json();
+    renderReport(data);
+
+    // Update URL
+    const url = new URL(window.location);
+    url.searchParams.set('shop_id', shopId);
+    window.history.replaceState({}, '', url);
+
+    document.getElementById('searchHint').textContent =
+      `✅ ${data.shop_name} · Score: ${data.health_score}`;
+
+  } catch (e) {
+    if (e.name === 'TimeoutError' || e.name === 'AbortError') {
+      showError('Timeout', 'Query took too long. Please retry.');
+    } else {
+      showError(L.error, `${L.errorMsg} (${e.message})`);
+    }
+    document.getElementById('searchHint').textContent = 'Error. Please retry.';
+    console.error(e);
+  }
+}
+
+function setLang(lang, el) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+async function shareReport() {
+  if (!currentData) return;
+  const url = currentData.report_url ||
+    `https://zhangwenle2026.github.io/shop-diagnosis/?shop_id=${currentData.shop_id}`;
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: `${currentData.shop_name} – Store Diagnosis`,
+        text: `Health Score: ${currentData.health_score} (${currentData.health_level})`,
+        url: url,
+      });
+    } else {
+      await navigator.clipboard.writeText(url);
+      document.getElementById('shareBtn').textContent = '✅ Link Copied!';
+      setTimeout(() => {
+        document.getElementById('shareBtn').textContent = '📤 Share Report';
+      }, 2000);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ── Auto-load from URL ────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const shopId = params.get('shop_id');
+  if (shopId) {
+    document.getElementById('shopIdInput').value = shopId;
+    runDiagnose();
+  }
 });
 </script>
 </body>
