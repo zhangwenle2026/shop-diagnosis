@@ -368,10 +368,12 @@ def generate_report_image(shop_data: dict) -> Optional[str]:
 # ─── Core Diagnosis ───────────────────────────────────────────────────────────
 
 def run_diagnosis(shop_id: int, days: int) -> dict:
-    end_dt = datetime.utcnow().date()
+    # 用 BRT (UTC-3) 时间，dt 字段格式为 yyyyMMdd，数据 T+1 所以用昨天作为 end
+    today_brt = (datetime.utcnow() - timedelta(hours=3)).date()
+    end_dt = today_brt - timedelta(days=1)  # 昨天，确保数据已产出
     start_dt = end_dt - timedelta(days=days - 1)
-    start_str = start_dt.strftime('%Y-%m-%d')
-    end_str = end_dt.strftime('%Y-%m-%d')
+    start_str = start_dt.strftime('%Y%m%d')
+    end_str = end_dt.strftime('%Y%m%d')
 
     order_sql = (
         f"SELECT shop_id, shop_name, shop_order_status, shop_income, shop_review_score,"
@@ -413,12 +415,13 @@ def run_diagnosis(shop_id: int, days: int) -> dict:
                 ratings.append(rating)
             prep = float(row[5]) if row[5] else None
             if prep and prep > 0:
-                prep_times.append(prep)
+                prep_times.append(prep)  # 已是分钟
             delv = float(row[6]) if row[6] else None
             if delv and delv > 0:
-                delivery_times.append(delv)
-            cr = row[7]
-            if cr and str(cr) not in ('0', 'None', '', 'null'):
+                delivery_times.append(delv / 60000)  # 毫秒转分钟
+            # 取消率：status=55 为已取消
+            status = str(row[2]) if row[2] else ''
+            if status == '55':
                 cancel_count += 1
         except (IndexError, TypeError, ValueError):
             continue
@@ -434,7 +437,7 @@ def run_diagnosis(shop_id: int, days: int) -> dict:
         "spu_count": 0,
         "hot_spu_count": 0,
         "total_orders": total_orders,
-        "total_income": round(total_income, 2),
+        "total_income": round(total_income / 100, 2),  # 分转元(R$)
         "days": days,
     }
 
