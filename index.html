@@ -1,264 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Store Operations Diagnosis | Keeta Brazil</title>
+<title>Diagnóstico de Loja · Keeta Brazil</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #f0f2f5;
-  color: #1a1a2e;
-  min-height: 100vh;
-}
-.container {
-  max-width: 430px;
-  margin: 0 auto;
-  background: #f0f2f5;
-  min-height: 100vh;
-}
-
-/* ── Search Bar ── */
-.search-section {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-  padding: 20px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.search-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.keeta-badge {
-  background: #FFD700;
-  color: #000;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
-}
-.search-title {
-  color: rgba(255,255,255,0.85);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-.search-row {
-  display: flex;
-  gap: 8px;
-}
-.search-input {
-  flex: 1;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 10px;
-  padding: 11px 14px;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  outline: none;
-  transition: all 0.2s;
-}
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+.container { max-width: 430px; margin: 0 auto; background: #f0f2f5; min-height: 100vh; }
+.lang-switch-bar { display: flex; gap: 6px; margin-bottom: 12px; }
+.ls-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; transition: all .2s; }
+.ls-btn.active { background: rgba(255,215,0,0.2); border-color: rgba(255,215,0,0.5); color: #FFD700; }
+.search-section { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); padding: 16px 16px 14px; position: sticky; top: 0; z-index: 100; }
+.search-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.keeta-logo { height: 24px; filter: brightness(0) invert(1); }
+.keeta-badge { background: #FFD700; color: #000; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+.search-title { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; }
+.search-row { display: flex; gap: 8px; }
+.search-input { flex: 1; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 11px 14px; color: #fff; font-size: 15px; font-weight: 500; outline: none; transition: all 0.2s; }
 .search-input::placeholder { color: rgba(255,255,255,0.4); }
-.search-input:focus {
-  background: rgba(255,255,255,0.18);
-  border-color: #FFD700;
-}
-.search-btn {
-  background: #FFD700;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  padding: 11px 18px;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  letter-spacing: 0.3px;
-}
+.search-input:focus { background: rgba(255,255,255,0.18); border-color: #FFD700; }
+.search-btn { background: #FFD700; color: #000; border: none; border-radius: 10px; padding: 11px 16px; font-size: 13px; font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
 .search-btn:hover { background: #ffe033; transform: scale(1.02); }
 .search-btn:active { transform: scale(0.98); }
 .search-btn:disabled { background: #999; color: #ccc; cursor: not-allowed; transform: none; }
-.search-hint {
-  margin-top: 8px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.4);
-  text-align: center;
-}
-
-/* ── Loading ── */
-.loading-state {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  gap: 16px;
-}
+.date-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.date-lbl { font-size: 11px; color: rgba(255,255,255,0.5); white-space: nowrap; }
+.date-input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 7px 8px; color: #fff; font-size: 12px; outline: none; min-width: 0; }
+.date-input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }
+.date-arrow { color: rgba(255,255,255,0.4); font-size: 13px; }
+.search-hint { margin-top: 7px; font-size: 11px; color: rgba(255,255,255,0.4); text-align: center; }
+.loading-state { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 16px; }
 .loading-state.active { display: flex; }
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(0,0,0,0.1);
-  border-top-color: #0f3460;
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-}
+.spinner { width: 48px; height: 48px; border: 4px solid rgba(0,0,0,0.1); border-top-color: #0f3460; border-radius: 50%; animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text {
-  font-size: 14px;
-  color: #6b7280;
-  text-align: center;
-  line-height: 1.6;
-}
-.loading-sub {
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-/* ── Error ── */
-.error-state {
-  display: none;
-  margin: 16px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  border-left: 4px solid #ef4444;
-  text-align: center;
-}
+.loading-text { font-size: 14px; color: #6b7280; text-align: center; line-height: 1.6; }
+.loading-sub { font-size: 11px; color: #9ca3af; }
+.error-state { display: none; margin: 16px; background: #fff; border-radius: 12px; padding: 20px; border-left: 4px solid #ef4444; text-align: center; }
 .error-state.active { display: block; }
 .error-icon { font-size: 32px; margin-bottom: 8px; }
 .error-title { font-size: 15px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
 .error-msg { font-size: 13px; color: #6b7280; line-height: 1.5; }
-
-/* ── Report ── */
 .report-area { display: none; }
 .report-area.active { display: block; }
-
-/* Header */
-.header {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
-  padding: 20px 16px 24px;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-.header::before {
-  content: '';
-  position: absolute;
-  top: -40px; right: -40px;
-  width: 150px; height: 150px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 50%;
-}
-.lang-bar {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-}
-.lang-tag {
-  background: rgba(255,255,255,0.12);
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.7);
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: all 0.2s;
-}
-.lang-tag.active {
-  background: rgba(255,215,0,0.2);
-  border-color: rgba(255,215,0,0.5);
-  color: #FFD700;
-}
-.shop-name {
-  font-size: 22px;
-  font-weight: 700;
-  margin: 8px 0 2px;
-  line-height: 1.2;
-  position: relative;
-  z-index: 1;
-}
-.shop-meta {
-  font-size: 12px;
-  color: rgba(255,255,255,0.5);
-  position: relative;
-  z-index: 1;
-}
-.score-card {
-  background: rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 16px;
-  margin: 16px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(8px);
-}
-.score-circle {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-}
+.report-header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); padding: 20px 16px 24px; color: #fff; position: relative; overflow: hidden; }
+.report-header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.04); border-radius: 50%; }
+.shop-name { font-size: 22px; font-weight: 700; margin: 4px 0 2px; line-height: 1.2; }
+.shop-meta { font-size: 12px; color: rgba(255,255,255,0.5); }
+.score-card { background: rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; margin: 16px 0 0; display: flex; align-items: center; gap: 16px; border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+.score-circle { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
 .score-num { font-size: 28px; font-weight: 900; color: #fff; }
 .score-info { flex: 1; }
 .score-level { font-size: 20px; font-weight: 800; }
 .score-emoji { font-size: 20px; margin-left: 6px; }
 .score-date { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 4px; }
-.deductions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 8px;
-}
-.ded-tag {
-  background: rgba(239,68,68,0.2);
-  color: #fca5a5;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  border: 1px solid rgba(239,68,68,0.3);
-}
-
-/* Diagnosis Section */
+.deductions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.ded-tag { background: rgba(239,68,68,0.2); color: #fca5a5; font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 1px solid rgba(239,68,68,0.3); }
 .section { padding: 0 12px; margin: 14px 0; }
-.section-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  padding-left: 4px;
-}
-.diag-row {
-  background: #fff;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  border-left: 3px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
+.section-title { font-size: 12px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-left: 4px; }
+.diag-row { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; border-left: 3px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .diag-row.s-ok { border-left-color: #22c55e; }
 .diag-row.s-warn { border-left-color: #f59e0b; }
 .diag-row.s-bad { border-left-color: #ef4444; }
-.diag-row.s-info { border-left-color: #6366f1; }
 .diag-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .diag-icon { font-size: 14px; font-weight: 700; }
 .diag-metric { font-size: 13px; font-weight: 600; flex: 1; }
@@ -266,200 +69,190 @@ body {
 .diag-meta { display: flex; justify-content: space-between; margin-top: 2px; }
 .diag-bench { font-size: 11px; color: #9ca3af; }
 .diag-cat { font-size: 10px; color: #d1d5db; background: #f3f4f6; padding: 1px 6px; border-radius: 3px; }
-.suggestion {
-  margin-top: 8px;
-  font-size: 11px;
-  color: #6b7280;
-  background: #fffbeb;
-  border-radius: 6px;
-  padding: 6px 8px;
-  border-left: 2px solid #f59e0b;
-  line-height: 1.4;
-}
-
-/* Action Row */
-.action-row {
-  padding: 12px 12px 4px;
-  display: flex;
-  gap: 8px;
-}
-.action-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-share {
-  background: #0f3460;
-  color: #fff;
-}
+.suggestion { margin-top: 8px; font-size: 11px; color: #6b7280; background: #fffbeb; border-radius: 6px; padding: 6px 8px; border-left: 2px solid #f59e0b; line-height: 1.4; }
+.action-row { padding: 12px 12px 4px; display: flex; gap: 8px; }
+.action-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-share { background: #0f3460; color: #fff; }
 .btn-share:hover { background: #1a4a7a; }
-.btn-new {
-  background: #f3f4f6;
-  color: #374151;
-}
+.btn-new { background: #f3f4f6; color: #374151; }
 .btn-new:hover { background: #e5e7eb; }
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 20px 16px;
-  font-size: 11px;
-  color: #9ca3af;
-  line-height: 1.6;
-}
+.footer { text-align: center; padding: 20px 16px; font-size: 11px; color: #9ca3af; line-height: 1.6; }
 .footer a { color: #6b7280; text-decoration: none; }
-.footer a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- ── Search Bar ── -->
   <div class="search-section">
+    <div class="lang-switch-bar">
+      <button class="ls-btn active" id="ls-pt" onclick="switchLang('pt')">&#127463;&#127479; PT</button>
+      <button class="ls-btn" id="ls-en" onclick="switchLang('en')">&#127468;&#127463; EN</button>
+      <button class="ls-btn" id="ls-zh" onclick="switchLang('zh')">&#127464;&#127475; ZH</button>
+    </div>
     <div class="search-header">
+      <img class="keeta-logo" src="https://msstest.sankuai.com/qacoverage-test/oversea/files/image/flowcopilot_943bf9a8-3216-4df0-ac6e-c0f33b78100f.png" alt="Keeta">
       <span class="keeta-badge">KEETA</span>
-      <span class="search-title">Store Diagnosis · 店铺诊断 · Diagnóstico de Loja</span>
+      <span class="search-title" id="ui-searchTitle">Diagnostico de Loja</span>
     </div>
     <div class="search-row">
-      <input
-        class="search-input"
-        id="shopIdInput"
-        type="number"
-        placeholder="Enter Shop ID / 输入 Shop ID"
-        inputmode="numeric"
-        onkeydown="if(event.key==='Enter')runDiagnose()"
-      />
-      <button class="search-btn" id="searchBtn" onclick="runDiagnose()">
-        🔍 Diagnose
-      </button>
+      <input class="search-input" id="shopIdInput" type="number" placeholder="Digite o Shop ID" inputmode="numeric" onkeydown="if(event.key==='Enter')runDiagnose()"/>
+      <button class="search-btn" id="searchBtn" onclick="runDiagnose()">Diagnosticar</button>
     </div>
-    <div class="search-hint" id="searchHint">
-      Try: 159409277 · Kibou Sushi's
+    <div class="date-row">
+      <span class="date-lbl" id="ui-dateFrom">De</span>
+      <input type="date" id="startDate" class="date-input">
+      <span class="date-arrow">&#8594;</span>
+      <span class="date-lbl" id="ui-dateTo">Ate</span>
+      <input type="date" id="endDate" class="date-input">
     </div>
+    <div class="search-hint" id="searchHint">Ex: 159409277</div>
   </div>
 
-  <!-- ── Loading ── -->
   <div class="loading-state" id="loadingState">
     <div class="spinner"></div>
-    <div class="loading-text">
-      Fetching data from Hive...<br>
-      <span class="loading-sub">正在查询数据，请稍候 · Buscando dados...</span>
-    </div>
+    <div class="loading-text" id="ui-loadingText">Buscando dados...<br><span class="loading-sub" id="ui-loadingSub">Geralmente leva 15-30 segundos</span></div>
   </div>
 
-  <!-- ── Error ── -->
   <div class="error-state" id="errorState">
-    <div class="error-icon">😕</div>
-    <div class="error-title" id="errorTitle">Shop Not Found</div>
-    <div class="error-msg" id="errorMsg">No data found for this Shop ID in the past 7 days.</div>
+    <div class="error-icon">&#128533;</div>
+    <div class="error-title" id="errorTitle">Loja Nao Encontrada</div>
+    <div class="error-msg" id="errorMsg">Nenhum dado encontrado para este Shop ID.</div>
   </div>
 
-  <!-- ── Report ── -->
   <div class="report-area" id="reportArea">
-
-    <div class="header">
-      <div class="lang-bar">
-        <span class="lang-tag active" onclick="setLang('en',this)">EN</span>
-        <span class="lang-tag" onclick="setLang('zh',this)">中文</span>
-        <span class="lang-tag" onclick="setLang('pt',this)">PT</span>
-      </div>
-      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px;position:relative;z-index:1">
-        STORE DIAGNOSIS REPORT
-      </div>
-      <div class="shop-name" id="shopName">—</div>
-      <div class="shop-meta" id="shopMeta">Shop ID: — · Last 7 days</div>
+    <div class="report-header">
+      <div style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:4px">STORE DIAGNOSIS REPORT</div>
+      <div class="shop-name" id="shopName">&#8212;</div>
+      <div class="shop-meta" id="shopMeta">Shop ID: &#8212;</div>
       <div class="score-card">
-        <div class="score-circle" id="scoreCircle">
-          <span class="score-num" id="scoreNum">—</span>
-        </div>
+        <div class="score-circle" id="scoreCircle"><span class="score-num" id="scoreNum">&#8212;</span></div>
         <div class="score-info">
-          <div>
-            <span class="score-level" id="scoreLevel">—</span>
-            <span class="score-emoji" id="scoreEmoji"></span>
-          </div>
-          <div class="score-date" id="scoreDate">—</div>
+          <div><span class="score-level" id="scoreLevel">&#8212;</span><span class="score-emoji" id="scoreEmoji"></span></div>
+          <div class="score-date" id="scoreDate">&#8212;</div>
           <div class="deductions" id="deductions"></div>
         </div>
       </div>
     </div>
-
     <div class="section">
-      <div class="section-title">📊 Diagnosis Details</div>
+      <div class="section-title" id="ui-diagTitle">Diagnostico Detalhado</div>
       <div id="diagRows"></div>
     </div>
-
     <div class="action-row">
-      <button class="action-btn btn-share" id="shareBtn" onclick="shareReport()">
-        📤 Share Report
-      </button>
-      <button class="action-btn btn-new" onclick="resetSearch()">
-        🔄 New Search
-      </button>
+      <button class="action-btn btn-share" id="shareBtn" onclick="shareReport()">Compartilhar</button>
+      <button class="action-btn btn-new" id="newBtn" onclick="resetSearch()">Nova Busca</button>
     </div>
+    <div class="footer">Keeta Brazil · SP Metropolitan · Auto-generated by AI Eric</div>
+  </div>
 
-    <div class="footer">
-      Keeta Brazil · SP Metropolitan · Auto-generated by AI Eric<br>
-      <a href="https://zhangwenle2026.github.io/shop-diagnosis/" id="pageLink">🔗 View Online</a>
-    </div>
-
-  </div><!-- /report-area -->
-
-</div><!-- /container -->
-
+</div>
 <script>
-// ── Config ──────────────────────────────────────────────────────────────────
-const API_BASE_URL = 'http://33.230.109.107:8765';
+var API_BASE_URL = 'http://33.230.109.107:8765';
 
-// ── State ───────────────────────────────────────────────────────────────────
-let currentLang = 'en';
-let currentData = null;
-
-// ── Language Labels ──────────────────────────────────────────────────────────
-const labels = {
+var I18N = {
+  pt: {
+    searchTitle: 'Diagnostico de Loja', placeholder: 'Digite o Shop ID',
+    btnDiagnose: 'Diagnosticar', btnShare: 'Compartilhar', btnNew: 'Nova Busca',
+    loading: 'Buscando dados no Hive...', loadingSub: 'Geralmente leva 15-30 segundos',
+    notFound: 'Loja Nao Encontrada', notFoundMsg: 'Nenhum dado encontrado para este Shop ID.',
+    connErr: 'Erro de Conexao', connErrMsg: 'Nao foi possivel conectar ao servidor da API.',
+    diagTitle: 'Diagnostico Detalhado', dateFrom: 'De', dateTo: 'Ate', benchmark: 'Benchmark',
+    METRICS: {
+      aov_brl:          { label: 'Ticket Medio',         cat: 'Financeiro',  tip: 'Crie combos e adicione itens premium ao cardapio.' },
+      cancel_rate:      { label: 'Taxa de Cancelamento', cat: 'Operacoes',   tip: 'Confirme pedidos rapidamente e mantenha estoque atualizado.' },
+      avg_rating:       { label: 'Avaliacao',            cat: 'Qualidade',   tip: 'Responda avaliacoes negativas e melhore o servico.' },
+      avg_delivery_min: { label: 'Tempo de Entrega',     cat: 'Entrega',     tip: 'Otimize preparo e coordene com entregadores.' },
+      spu_img_pct:      { label: 'SPU c/ Imagem',        cat: 'Cardapio',    tip: 'Adicione fotos de qualidade a todos os produtos.' },
+      active_spus:      { label: 'Produtos Ativos',      cat: 'Cardapio',    tip: 'Diversifique o cardapio com mais opcoes.' }
+    }
+  },
   en: {
-    diagTitle: '📊 Diagnosis Details',
-    share: '📤 Share Report',
-    newSearch: '🔄 New Search',
-    loading: 'Fetching data from Hive...',
-    loadingSub: '正在查询数据，请稍候 · Buscando dados...',
-    benchmark: 'Benchmark',
-    notFound: 'Shop Not Found',
-    notFoundMsg: 'No data found for this shop ID. Please check the ID and try again.',
-    error: 'Connection Error',
-    errorMsg: 'Could not reach the API server. Make sure the backend is running.',
+    searchTitle: 'Store Diagnosis', placeholder: 'Enter Shop ID',
+    btnDiagnose: 'Diagnose', btnShare: 'Share Report', btnNew: 'New Search',
+    loading: 'Fetching data from Hive...', loadingSub: 'Usually takes 15-30 seconds',
+    notFound: 'Shop Not Found', notFoundMsg: 'No data found for this shop ID.',
+    connErr: 'Connection Error', connErrMsg: 'Could not reach the API server.',
+    diagTitle: 'Diagnosis Details', dateFrom: 'From', dateTo: 'To', benchmark: 'Benchmark',
+    METRICS: {
+      aov_brl:          { label: 'Avg Order Value',  cat: 'Financial',   tip: 'Create combos and add premium items to the menu.' },
+      cancel_rate:      { label: 'Cancel Rate',      cat: 'Operations',  tip: 'Confirm orders quickly and keep inventory updated.' },
+      avg_rating:       { label: 'Rating',           cat: 'Quality',     tip: 'Respond to negative reviews and improve service.' },
+      avg_delivery_min: { label: 'Delivery Time',    cat: 'Delivery',    tip: 'Optimize prep time and courier coordination.' },
+      spu_img_pct:      { label: 'SPU w/ Image',     cat: 'Menu',        tip: 'Add quality photos to all products.' },
+      active_spus:      { label: 'Active SKUs',      cat: 'Menu',        tip: 'Diversify your menu with more options.' }
+    }
   },
   zh: {
-    diagTitle: '📊 诊断详情',
-    share: '📤 分享报告',
-    newSearch: '🔄 重新搜索',
-    loading: '正在从 Hive 查询数据...',
-    loadingSub: '通常需要 15-30 秒',
-    benchmark: '基准',
-    notFound: '商家不存在',
-    notFoundMsg: '未找到该 Shop ID 的数据，请检查后重试。',
-    error: '连接错误',
-    errorMsg: '无法连接后端服务，请确认 API 已启动。',
-  },
-  pt: {
-    diagTitle: '📊 Diagnóstico Detalhado',
-    share: '📤 Compartilhar',
-    newSearch: '🔄 Nova Busca',
-    loading: 'Buscando dados no Hive...',
-    loadingSub: 'Geralmente leva 15-30 segundos',
-    benchmark: 'Benchmark',
-    notFound: 'Loja Não Encontrada',
-    notFoundMsg: 'Nenhum dado encontrado para este Shop ID.',
-    error: 'Erro de Conexão',
-    errorMsg: 'Não foi possível conectar ao servidor da API.',
-  },
+    searchTitle: '商家健康诊断', placeholder: '输入 Shop ID',
+    btnDiagnose: '开始诊断', btnShare: '分享报告', btnNew: '重新搜索',
+    loading: '正在从 Hive 查询数据...', loadingSub: '通常需要 15-30 秒',
+    notFound: '商家不存在', notFoundMsg: '未找到该 Shop ID 的数据，请检查后重试。',
+    connErr: '连接错误', connErrMsg: '无法连接后端服务，请确认 API 已启动。',
+    diagTitle: '诊断详情', dateFrom: '开始', dateTo: '结束', benchmark: '基准',
+    METRICS: {
+      aov_brl:          { label: '客单价',     cat: '财务',  tip: '增加套餐和高价商品。' },
+      cancel_rate:      { label: '取消率',     cat: '运营',  tip: '快速确认订单，保持库存更新。' },
+      avg_rating:       { label: '评分',       cat: '质量',  tip: '回复差评，提升服务质量。' },
+      avg_delivery_min: { label: '配送时长',   cat: '配送',  tip: '优化备餐流程和骑手协作。' },
+      spu_img_pct:      { label: '商品图片率', cat: '菜单',  tip: '为所有商品添加高质量图片。' },
+      active_spus:      { label: '活跃商品数', cat: '菜单',  tip: '丰富菜单品类。' }
+    }
+  }
 };
 
-// ── UI Helpers ───────────────────────────────────────────────────────────────
+var BENCHMARKS = {
+  aov_brl:          { good: 35.0,  weight: 15, lower: false, unit: 'R$'  },
+  cancel_rate:      { good: 3.0,   weight: 20, lower: true,  unit: '%'   },
+  avg_rating:       { good: 4.5,   weight: 25, lower: false, unit: 'star' },
+  avg_delivery_min: { good: 35.0,  weight: 20, lower: true,  unit: 'min' },
+  spu_img_pct:      { good: 80.0,  weight: 10, lower: false, unit: '%'   },
+  active_spus:      { good: 20.0,  weight: 10, lower: false, unit: 'num' }
+};
+
+function fmtVal(key, val) {
+  if (val == null) return '--';
+  var n = parseFloat(val);
+  var u = BENCHMARKS[key].unit;
+  if (u === 'R$')   return 'R$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (u === '%')    return n.toFixed(1) + '%';
+  if (u === 'star') return n.toFixed(2) + ' ★';
+  if (u === 'min')  return Math.round(n) + ' min';
+  return String(Math.round(n));
+}
+
+var currentLang = 'pt';
+var currentData = null;
+
+function brtDate(offsetDays) {
+  offsetDays = offsetDays || 0;
+  var d = new Date(new Date().getTime() - 3 * 3600 * 1000);
+  d.setUTCDate(d.getUTCDate() + offsetDays);
+  return d.toISOString().slice(0, 10);
+}
+function firstDayOfMonth() {
+  var d = new Date(new Date().getTime() - 3 * 3600 * 1000);
+  return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-01';
+}
+
+function switchLang(lang) {
+  currentLang = lang;
+  ['pt','en','zh'].forEach(function(l) {
+    var b = document.getElementById('ls-' + l);
+    if (b) b.className = 'ls-btn' + (l === lang ? ' active' : '');
+  });
+  var t = I18N[lang];
+  document.getElementById('ui-searchTitle').textContent = t.searchTitle;
+  document.getElementById('shopIdInput').placeholder = t.placeholder;
+  document.getElementById('searchBtn').textContent = t.btnDiagnose;
+  document.getElementById('shareBtn').textContent = t.btnShare;
+  document.getElementById('newBtn').textContent = t.btnNew;
+  document.getElementById('ui-loadingText').firstChild.textContent = t.loading + ' ';
+  document.getElementById('ui-loadingSub').textContent = t.loadingSub;
+  document.getElementById('ui-diagTitle').textContent = t.diagTitle;
+  document.getElementById('ui-dateFrom').textContent = t.dateFrom;
+  document.getElementById('ui-dateTo').textContent = t.dateTo;
+  if (currentData) renderReport(currentData);
+}
+
 function showLoading() {
   document.getElementById('loadingState').className = 'loading-state active';
   document.getElementById('errorState').className = 'error-state';
@@ -474,7 +267,7 @@ function showError(title, msg) {
   document.getElementById('errorMsg').textContent = msg;
   document.getElementById('searchBtn').disabled = false;
 }
-function showReport(data) {
+function showReport() {
   document.getElementById('loadingState').className = 'loading-state';
   document.getElementById('errorState').className = 'error-state';
   document.getElementById('reportArea').className = 'report-area active';
@@ -489,184 +282,206 @@ function resetSearch() {
   document.getElementById('searchBtn').disabled = false;
 }
 
-// ── Render Report ────────────────────────────────────────────────────────────
+function buildDiagnosis(raw, lang) {
+  var t = I18N[lang];
+  var scColor = { ok: '#22c55e', warn: '#f59e0b', bad: '#ef4444' };
+  var scIcon  = { ok: '\u2713', warn: '\u26a0', bad: '\u2717' };
+  var earned = 0, totalW = 0;
+  var items = [], deds = [];
+  var keys = ['aov_brl','cancel_rate','avg_rating','avg_delivery_min','spu_img_pct','active_spus'];
+  keys.forEach(function(key) {
+    var val = raw[key];
+    if (val == null) return;
+    var cfg = BENCHMARKS[key];
+    var n = parseFloat(val);
+    var ratio = cfg.lower
+      ? Math.min(cfg.good / Math.max(n, 0.01), 1.5)
+      : Math.min(n / Math.max(cfg.good, 0.01), 1.5);
+    var score = Math.min(Math.floor(ratio * cfg.weight), cfg.weight);
+    earned += score; totalW += cfg.weight;
+    var pct = (score / cfg.weight) * 100;
+    var status = pct >= 75 ? 'ok' : (pct >= 50 ? 'warn' : 'bad');
+    var ptsLost = cfg.weight - score;
+    var meta = t.METRICS[key];
+    if (ptsLost > 0) deds.push({ pts: ptsLost, label: meta.label });
+    items.push({
+      metric: meta.label, value: fmtVal(key, val),
+      benchmark: fmtVal(key, cfg.good), status: status,
+      category: meta.cat,
+      suggestion: status !== 'ok' ? meta.tip : '',
+      color: scColor[status], icon: scIcon[status]
+    });
+  });
+  var health = Math.max(0, Math.min(100, Math.floor((earned / Math.max(totalW, 1)) * 100)));
+  var level, color, emoji;
+  if (health >= 90)      { level = (lang==='pt'?'Excelente':lang==='en'?'Excellent':'优秀');  color='#22c55e'; emoji='🏆'; }
+  else if (health >= 75) { level = (lang==='pt'?'Bom':lang==='en'?'Good':'良好');             color='#3b82f6'; emoji='👍'; }
+  else if (health >= 60) { level = (lang==='pt'?'Regular':lang==='en'?'Fair':'一般');         color='#f59e0b'; emoji='📈'; }
+  else                   { level = (lang==='pt'?'Critico':lang==='en'?'Critical':'危险');     color='#ef4444'; emoji='🚨'; }
+  deds.sort(function(a,b){ return b.pts - a.pts; });
+  return { health: health, level: level, color: color, emoji: emoji, items: items, deds: deds.slice(0,4) };
+}
+
 function renderReport(data) {
   currentData = data;
+  var raw = data.raw_metrics || data;
+  var d = buildDiagnosis(raw, currentLang);
+  var t = I18N[currentLang];
 
-  // Header
-  document.getElementById('shopName').textContent = data.shop_name || `Shop #${data.shop_id}`;
-  document.getElementById('shopMeta').textContent =
-    `Shop ID: ${data.shop_id} · Last ${data.metrics.days} days`;
+  document.getElementById('shopName').textContent = data.shop_name || ('Shop #' + data.shop_id);
+  var days = 0;
+  if (raw.start_date && raw.end_date) {
+    var ms = new Date(raw.end_date) - new Date(raw.start_date);
+    days = Math.round(ms / 86400000) + 1;
+  }
+  document.getElementById('shopMeta').textContent = 'Shop ID: ' + data.shop_id +
+    (days ? (' \u00b7 ' + raw.start_date + ' \u2192 ' + raw.end_date + ' (' + days + 'd)') : '');
 
-  const circle = document.getElementById('scoreCircle');
-  circle.style.background = data.health_color || '#6b7280';
-  document.getElementById('scoreNum').textContent = data.health_score;
-  document.getElementById('scoreLevel').textContent = data.health_level;
-  document.getElementById('scoreLevel').style.color = data.health_color;
-  document.getElementById('scoreEmoji').textContent = data.health_emoji || '';
+  var circle = document.getElementById('scoreCircle');
+  circle.style.background = d.color;
+  document.getElementById('scoreNum').textContent = d.health;
+  var sl = document.getElementById('scoreLevel');
+  sl.textContent = d.level; sl.style.color = d.color;
+  document.getElementById('scoreEmoji').textContent = d.emoji;
+  var genAt = data.generated_at
+    ? new Date(data.generated_at).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', hour12: false })
+    : new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', hour12: false });
+  document.getElementById('scoreDate').textContent = 'Gerado ' + genAt;
 
-  const genAt = data.generated_at
-    ? new Date(data.generated_at).toLocaleString('en-GB', { timeZone: 'UTC', hour12: false })
-    : new Date().toUTCString();
-  document.getElementById('scoreDate').textContent = `Generated ${genAt}`;
-
-  // Deductions
-  const dedEl = document.getElementById('deductions');
+  var dedEl = document.getElementById('deductions');
   dedEl.innerHTML = '';
-  (data.deductions || []).slice(0, 4).forEach(d => {
-    const span = document.createElement('span');
+  d.deds.forEach(function(item) {
+    var span = document.createElement('span');
     span.className = 'ded-tag';
-    span.textContent = `-${d.pts} ${d.label}`;
+    span.textContent = '-' + item.pts + ' ' + item.label;
     dedEl.appendChild(span);
   });
 
-  // Diagnosis rows
-  renderDiagRows(data.diagnosis || []);
-
-  // Share link
-  document.getElementById('pageLink').href =
-    data.report_url || `https://zhangwenle2026.github.io/shop-diagnosis/?shop_id=${data.shop_id}`;
-
-  showReport(data);
+  renderDiagRows(d.items, t);
+  showReport();
 }
 
-function renderDiagRows(items) {
-  const scColor = { ok: '#22c55e', warn: '#f59e0b', bad: '#ef4444', info: '#6366f1' };
-  const scIcon = { ok: '✓', warn: '⚠', bad: '✗', info: 'ℹ' };
-
-  const container = document.getElementById('diagRows');
+function renderDiagRows(items, t) {
+  var container = document.getElementById('diagRows');
   container.innerHTML = '';
-
-  // Group by category
-  const groups = {};
-  items.forEach(item => {
+  var groups = {};
+  items.forEach(function(item) {
     if (!groups[item.category]) groups[item.category] = [];
     groups[item.category].push(item);
   });
-
-  Object.entries(groups).forEach(([cat, catItems]) => {
-    const section = document.createElement('div');
-    section.className = 'section';
-    section.style.padding = '0';
-    section.style.margin = '0 0 12px 0';
-
-    const title = document.createElement('div');
+  Object.keys(groups).forEach(function(cat) {
+    var sec = document.createElement('div');
+    sec.style.cssText = 'margin:0 0 12px 0';
+    var title = document.createElement('div');
     title.className = 'section-title';
+    title.style.cssText = 'padding-left:4px;margin-bottom:8px';
     title.textContent = cat;
-    section.appendChild(title);
-
-    catItems.forEach(item => {
-      const row = document.createElement('div');
-      row.className = `diag-row s-${item.status}`;
-      const color = scColor[item.status] || '#6b7280';
-      const icon = scIcon[item.status] || '•';
-
-      row.innerHTML = `
-        <div class="diag-header">
-          <span class="diag-icon" style="color:${color}">${icon}</span>
-          <span class="diag-metric">${item.metric}</span>
-          <span class="diag-value" style="color:${color}">${item.value}</span>
-        </div>
-        <div class="diag-meta">
-          <span class="diag-bench">Benchmark: ${item.benchmark}</span>
-          <span class="diag-cat">${item.category}</span>
-        </div>
-        ${item.suggestion ? `<div class="suggestion">💡 ${item.suggestion}</div>` : ''}
-      `;
-      section.appendChild(row);
+    sec.appendChild(title);
+    groups[cat].forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'diag-row s-' + item.status;
+      row.innerHTML =
+        '<div class="diag-header">' +
+          '<span class="diag-icon" style="color:' + item.color + '">' + item.icon + '</span>' +
+          '<span class="diag-metric">' + item.metric + '</span>' +
+          '<span class="diag-value" style="color:' + item.color + '">' + item.value + '</span>' +
+        '</div>' +
+        '<div class="diag-meta">' +
+          '<span class="diag-bench">' + (t.benchmark||'Benchmark') + ': ' + item.benchmark + '</span>' +
+          '<span class="diag-cat">' + item.category + '</span>' +
+        '</div>' +
+        (item.suggestion ? '<div class="suggestion">💡 ' + item.suggestion + '</div>' : '');
+      sec.appendChild(row);
     });
-    container.appendChild(section);
+    container.appendChild(sec);
   });
 }
 
-// ── Main ─────────────────────────────────────────────────────────────────────
 async function runDiagnose() {
-  const raw = document.getElementById('shopIdInput').value.trim();
-  if (!raw || isNaN(parseInt(raw))) {
-    document.getElementById('shopIdInput').focus();
-    return;
-  }
-  const shopId = parseInt(raw);
-  const days = 7;
-  const L = labels[currentLang];
-
-  // Check URL params too
-  const params = new URLSearchParams(window.location.search);
+  var raw = document.getElementById('shopIdInput').value.trim();
+  if (!raw || isNaN(parseInt(raw))) { document.getElementById('shopIdInput').focus(); return; }
+  var shopId = parseInt(raw);
+  var startDate = document.getElementById('startDate').value;
+  var endDate = document.getElementById('endDate').value;
+  var t = I18N[currentLang];
 
   showLoading();
-  document.getElementById('searchHint').textContent = `Querying shop ${shopId}...`;
+  document.getElementById('searchHint').textContent = 'Querying shop ' + shopId + '...';
 
   try {
-    const resp = await fetch(`${API_BASE_URL}/diagnose?shop_id=${shopId}&days=${days}`, {
-      signal: AbortSignal.timeout(130000)
-    });
+    var url = API_BASE_URL + '/diagnose?shop_id=' + shopId;
+    if (startDate) url += '&start=' + startDate;
+    if (endDate)   url += '&end=' + endDate;
+    var resp = await fetch(url, { signal: AbortSignal.timeout(130000) });
 
     if (resp.status === 404) {
-      showError(L.notFound, L.notFoundMsg);
+      showError(t.notFound, t.notFoundMsg);
       document.getElementById('searchHint').textContent = 'Shop not found.';
       return;
     }
     if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      showError(L.error, err.detail || `HTTP ${resp.status}`);
+      var err = await resp.json().catch(function(){ return {}; });
+      showError(t.connErr, err.detail || 'HTTP ' + resp.status);
       return;
     }
+    var data = await resp.json();
 
-    const data = await resp.json();
-    renderReport(data);
+    // 兼容两种响应格式
+    // 格式A: {shop_id, shop_name, metrics:{...}, img_url, ...}  (db轮询结果)
+    // 格式B: 直接 flat 对象
+    var rawMetrics = {};
+    if (data.metrics && typeof data.metrics === 'object') {
+      rawMetrics = data.metrics;
+    } else {
+      rawMetrics = data;
+    }
+    rawMetrics.start_date = rawMetrics.start_date || startDate;
+    rawMetrics.end_date   = rawMetrics.end_date   || endDate;
 
-    // Update URL
-    const url = new URL(window.location);
-    url.searchParams.set('shop_id', shopId);
-    window.history.replaceState({}, '', url);
+    var renderData = {
+      shop_id: data.shop_id || shopId,
+      shop_name: data.shop_name || rawMetrics.shop_name || ('Shop #' + shopId),
+      generated_at: data.updated_at || data.generated_at || null,
+      raw_metrics: rawMetrics
+    };
 
-    document.getElementById('searchHint').textContent =
-      `✅ ${data.shop_name} · Score: ${data.health_score}`;
+    renderReport(renderData);
 
-  } catch (e) {
+    var u = new URL(window.location);
+    u.searchParams.set('shop_id', shopId);
+    window.history.replaceState({}, '', u);
+    document.getElementById('searchHint').textContent = renderData.shop_name + ' · Score: ' + buildDiagnosis(rawMetrics, currentLang).health;
+
+  } catch(e) {
     if (e.name === 'TimeoutError' || e.name === 'AbortError') {
       showError('Timeout', 'Query took too long. Please retry.');
     } else {
-      showError(L.error, `${L.errorMsg} (${e.message})`);
+      showError(t.connErr, t.connErrMsg + ' (' + e.message + ')');
     }
     document.getElementById('searchHint').textContent = 'Error. Please retry.';
-    console.error(e);
   }
-}
-
-function setLang(lang, el) {
-  currentLang = lang;
-  document.querySelectorAll('.lang-tag').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
 }
 
 async function shareReport() {
   if (!currentData) return;
-  const url = currentData.report_url ||
-    `https://zhangwenle2026.github.io/shop-diagnosis/?shop_id=${currentData.shop_id}`;
+  var url = window.location.href;
   try {
     if (navigator.share) {
-      await navigator.share({
-        title: `${currentData.shop_name} – Store Diagnosis`,
-        text: `Health Score: ${currentData.health_score} (${currentData.health_level})`,
-        url: url,
-      });
+      await navigator.share({ title: (currentData.shop_name || 'Store') + ' - Diagnosis', url: url });
     } else {
       await navigator.clipboard.writeText(url);
-      document.getElementById('shareBtn').textContent = '✅ Link Copied!';
-      setTimeout(() => {
-        document.getElementById('shareBtn').textContent = '📤 Share Report';
-      }, 2000);
+      var btn = document.getElementById('shareBtn');
+      btn.textContent = '✅ Copied!';
+      setTimeout(function(){ btn.textContent = I18N[currentLang].btnShare; }, 2000);
     }
-  } catch (e) {
-    console.error(e);
-  }
+  } catch(e) { console.error(e); }
 }
 
-// ── Auto-load from URL ────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(window.location.search);
-  const shopId = params.get('shop_id');
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('startDate').value = firstDayOfMonth();
+  document.getElementById('endDate').value = brtDate(-1);
+  var params = new URLSearchParams(window.location.search);
+  var shopId = params.get('shop_id');
   if (shopId) {
     document.getElementById('shopIdInput').value = shopId;
     runDiagnose();
