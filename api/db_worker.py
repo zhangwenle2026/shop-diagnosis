@@ -62,10 +62,81 @@ def upload_image(img_path):
     except Exception:
         return None
 
+def build_diagnosis(metrics: dict) -> dict:
+    """Build health score + diagnosis rows from raw metrics dict."""
+    BENCHMARKS = {
+        "aov_brl":          {"label": "Ticket Medio",         "good": 35.0,  "weight": 15, "unit": "R$",  "lower": False, "category": "Financeiro"},
+        "cancel_rate":      {"label": "Taxa de Cancelamento", "good": 3.0,   "weight": 20, "unit": "%",   "lower": True,  "category": "Operacoes"},
+        "avg_rating":       {"label": "Avaliacao",            "good": 4.5,   "weight": 25, "unit": "star","lower": False, "category": "Qualidade"},
+        "avg_delivery_min": {"label": "Tempo de Entrega",     "good": 35.0,  "weight": 20, "unit": "min", "lower": True,  "category": "Entrega"},
+        "spu_img_pct":      {"label": "SPU c/ Imagem",        "good": 80.0,  "weight": 10, "unit": "%",   "lower": False, "category": "Cardapio"},
+        "active_spus":      {"label": "Produtos Ativos",      "good": 20.0,  "weight": 10, "unit": "num", "lower": False, "category": "Cardapio"},
+    }
+    TIPS = {
+        "aov_brl":          "Crie combos e adicione itens premium ao cardapio.",
+        "cancel_rate":      "Confirme pedidos rapidamente e mantenha estoque atualizado.",
+        "avg_rating":       "Responda avaliacoes negativas e melhore o servico.",
+        "avg_delivery_min": "Otimize preparo e coordene com entregadores.",
+        "spu_img_pct":      "Adicione fotos de qualidade a todos os produtos.",
+        "active_spus":      "Diversifique o cardapio com mais opcoes.",
+    }
+    def fmt(key, val):
+        if val is None: return "--"
+        n = float(val)
+        u = BENCHMARKS[key]["unit"]
+        if u == "R$":   return f"R${n:,.2f}"
+        if u == "%":    return f"{n:.1f}%"
+        if u == "star": return f"{n:.2f} *"
+        if u == "min":  return f"{round(n)} min"
+        return str(int(n))
+
+    earned = 0; total_w = 0
+    diagnosis = []; deductions = []
+    for key, cfg in BENCHMARKS.items():
+        val = metrics.get(key)
+        if val is None: continue
+        n = float(val); bm = cfg["good"]; w = cfg["weight"]; lower = cfg["lower"]
+        ratio = min(bm / max(n, 0.01), 1.5) if lower else min(n / max(bm, 0.01), 1.5)
+        score = min(int(ratio * w), w)
+        earned += score; total_w += w
+        pct = (score / w) * 100
+        status = "ok" if pct >= 75 else ("warn" if pct >= 50 else "bad")
+        pts_lost = w - score
+        if pts_lost > 0:
+            deductions.append({"pts": pts_lost, "label": cfg["label"]})
+        diagnosis.append({
+            "metric": cfg["label"], "value": fmt(key, val),
+            "benchmark": fmt(key, bm), "status": status,
+            "category": cfg["category"],
+            "suggestion": TIPS[key] if status != "ok" else "",
+        })
+    health = max(0, min(100, int((earned / max(total_w, 1)) * 100)))
+    if health >= 90:   level, color, emoji = "Excelente", "#22c55e", "trophy"
+    elif health >= 75: level, color, emoji = "Bom",       "#3b82f6", "+1"
+    elif health >= 60: level, color, emoji = "Regular",   "#f59e0b", "chart"
+    else:              level, color, emoji = "Critico",   "#ef4444", "alert"
+    deductions.sort(key=lambda x: -x["pts"])
+    return {
+        "health_score": health, "health_level": level,
+        "health_color": color, "health_emoji": emoji,
+        "deductions": deductions[:4], "diagnosis": diagnosis,
+    }
+
+
 def process_request(row):
     row_id = row["id"]
     shop_id = row["shop_id"]
-    log(f"Processing shop_id={shop_id} (id={row_id})")
+    # 兼容两种方式：DB列（旧）或 metrics JSON里的 req_start/req_end（新）
+    start_date = row.get("start_date")
+    end_date = row.get("end_date")
+    if not start_date or not end_date:
+        try:
+            pre_metrics = json.loads(row.get("metrics") or "{}")
+            start_date = start_date or pre_metrics.get("req_start")
+            end_date   = end_date   or pre_metrics.get("req_end")
+        except Exception:
+            pass
+    log(f"Processing shop_id={shop_id} (id={row_id}) [{start_date} -> {end_date}]")
 
     # mark as processing
     set_status(row_id, "processing")
@@ -73,9 +144,16 @@ def process_request(row):
     img_path = OUTPUT_DIR / f"shop_report_{shop_id}.jpg"
     json_path = OUTPUT_DIR / f"shop_report_{shop_id}.json"
 
+    # build command
+    cmd = [sys.executable, str(SCRIPT), "--shop_id", str(shop_id), "--lang", "pt"]
+    if start_date and end_date:
+        cmd += ["--start", str(start_date), "--end", str(end_date)]
+    else:
+        cmd += ["--days", "7"]
+
     # run gen_shop_report.py
     r = subprocess.run(
-        [sys.executable, str(SCRIPT), "--shop_id", str(shop_id), "--days", "7", "--lang", "zh"],
+        cmd,
         capture_output=True, text=True, timeout=120,
         cwd=str(SCRIPT.parent)
     )
@@ -100,6 +178,13 @@ def process_request(row):
             pass
 
     shop_name = metrics.pop("shop_name", f"Shop #{shop_id}")
+
+    # Build health score + diagnosis and merge into metrics
+    health_info = build_diagnosis(metrics)
+    metrics.update(health_info)
+    # preserve date range info
+    if start_date: metrics["start_date"] = start_date
+    if end_date:   metrics["end_date"] = end_date
 
     set_status(row_id, "done", {
         "img_url": img_url,
